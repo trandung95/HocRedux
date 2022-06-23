@@ -14,11 +14,15 @@ class ModalGioHangRedux extends Component {
                     <td>{sanPham.maSP}</td>
                     <td>{sanPham.tenSP}</td>
                     <td>{sanPham.giaBan}</td>
-                    <td>{sanPham.soLuong}</td>
+                    <td>
+                        <button className='btn btn-danger' onClick={() => { this.props.tangGiamSoLuong(sanPham.maSP, -1) }}>-</button>
+                        {sanPham.soLuong}
+                        <button className='btn btn-success' onClick={() => { this.props.tangGiamSoLuong(sanPham.maSP, 1) }}>+</button>
+                    </td>
                     <td>{sanPham.giaBan * sanPham.soLuong}</td>
                     <td>
-                        <button className='btn btn-success'>Thanh toán</button>
-                        <button className="btn btn-danger ml-2">Xóa</button>
+                        <button className='btn btn-success' onClick={() => { this.props.thanhToan(sanPham) }}>Thanh toán</button>
+                        <button className="btn btn-danger ml-2" onClick={() => { this.props.xoaGioHang(sanPham.maSP) }}>Xóa</button>
                     </td>
                 </tr>
             )
@@ -27,17 +31,16 @@ class ModalGioHangRedux extends Component {
     render() {
         return (
             <div>
-                <h3>ModalGioHangRedux</h3>
+                <h3 className='display-4 text-success'>ModalGioHangRedux</h3>
                 <table>
-                    <thead>
+                    <thead className='text-primary'>
                         <tr>
-                            <th>Mã sản phẩm</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Giá bán</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                            <th>
-                            </th>
+                            <th className='pr-3'>Mã sản phẩm</th>
+                            <th className='pr-3'>Tên sản phẩm</th>
+                            <th className='pr-3'>Giá bán</th>
+                            <th className='pr-3'>Số lượng</th>
+                            <th className='pr-3'>Thành tiền</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,6 +53,35 @@ class ModalGioHangRedux extends Component {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        xoaGioHang: (sanPhamXoa) => {
+            if (window.confirm(`Bạn có muốn xóa sản phẩm này không?`)) {
+                console.log(sanPhamXoa.tenSP);
+                const action = {
+                    type: 'XOA_GIO_HANG',
+                    sanPhamXoa
+                };
+                dispatch(action)
+            }
+
+        },
+        tangGiamSoLuong: (maSP, soLuong) => {
+            const action = {
+                type: 'TANG_GIAM_SO_LUONG',
+                maSP, soLuong
+            };
+            dispatch(action);
+        },
+        thanhToan: (sanPham) => {
+            const action = {
+                type: 'THANH_TOAN',
+                sanPham
+            };
+            dispatch(action);
+        }
+    }
+}
 const mapStateToProps = (rootReducer) => {
     return {
         // gioHangStateToProps: rootReducer.GioHangReducer.gioHangMacDinh
@@ -58,4 +90,4 @@ const mapStateToProps = (rootReducer) => {
     }
 }
 
-export default connect(mapStateToProps, null)(ModalGioHangRedux)
+export default connect(mapStateToProps, mapDispatchToProps)(ModalGioHangRedux)
